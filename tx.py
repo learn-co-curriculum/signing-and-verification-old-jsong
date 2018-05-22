@@ -7,6 +7,7 @@ from helper import (
 )
 from script import Script
 
+
 class Tx:
 
     def __init__(self, version, tx_ins, tx_outs, locktime):
@@ -29,21 +30,6 @@ class Tx:
             self.locktime,
         )
 
-    @classmethod
-    def parse(cls, s):
-        '''Takes a byte stream and parses the transaction at the start
-        return a Tx object
-        '''
-        # s.read(n) will return n bytes
-        # version has 4 bytes, little-endian, interpret as int
-        # num_inputs is a varint, use read_varint(s)
-        # each input needs parsing
-        # num_outputs is a varint, use read_varint(s)
-        # each output needs parsing
-        # locktime is 4 bytes, little-endian
-        # return an instance of the class (cls(...))
-        raise NotImplementedError
-
 
 class TxIn:
     def __init__(self, prev_tx, prev_index, script_sig, sequence):
@@ -58,20 +44,6 @@ class TxIn:
             self.prev_index,
         )
 
-    @classmethod
-    def parse(cls, s):
-        '''Takes a byte stream and parses the tx_input at the start
-        return a TxIn object
-        '''
-        # s.read(n) will return n bytes
-        # prev_tx is 32 bytes, little endian
-        # prev_index is 4 bytes, little endian, interpret as int
-        # script_sig is a variable field (length followed by the data)
-        # get the length by using read_varint(s)
-        # sequence is 4 bytes, little-endian, interpret as int
-        # return an instance of the class (cls(...))
-        raise NotImplementedError
-
 
 class TxOut:
 
@@ -82,26 +54,8 @@ class TxOut:
     def __repr__(self):
         return '{}:{}'.format(self.amount, self.script_pubkey)
 
-    @classmethod
-    def parse(cls, s):
-        '''Takes a byte stream and parses the tx_output at the start
-        return a TxOut object
-        '''
-        # s.read(n) will return n bytes
-        # amount is 8 bytes, little endian, interpret as int
-        # script_pubkey is a variable field (length followed by the data)
-        # get the length by using read_varint(s)
-        # return an instance of the class (cls(...))
-        raise NotImplementedError
-
 
 class TxTest(TestCase):
-
-    def test_parse_version(self):
-        raw_tx = bytes.fromhex('0100000001813f79011acb80925dfe69b3def355fe914bd1d96a3f5f71bf8303c6a989c7d1000000006b483045022100ed81ff192e75a3fd2304004dcadb746fa5e24c5031ccfcf21320b0277457c98f02207a986d955c6e0cb35d446a89d3f56100f4d7f67801c31967743a9c8e10615bed01210349fc4e631e3624a545de3f89f5d8684c7b8138bd94bdd531d2e213bf016b278afeffffff02a135ef01000000001976a914bc3b654dca7e56b04dca18f2566cdaf02e8d9ada88ac99c39800000000001976a9141c4bc762dd5423e332166702cb75f40df79fea1288ac19430600')
-        stream = BytesIO(raw_tx)
-        tx = Tx.parse(stream)
-        self.assertEqual(tx.version, 1)
 
     def test_parse_inputs(self):
         raw_tx = bytes.fromhex('0100000001813f79011acb80925dfe69b3def355fe914bd1d96a3f5f71bf8303c6a989c7d1000000006b483045022100ed81ff192e75a3fd2304004dcadb746fa5e24c5031ccfcf21320b0277457c98f02207a986d955c6e0cb35d446a89d3f56100f4d7f67801c31967743a9c8e10615bed01210349fc4e631e3624a545de3f89f5d8684c7b8138bd94bdd531d2e213bf016b278afeffffff02a135ef01000000001976a914bc3b654dca7e56b04dca18f2566cdaf02e8d9ada88ac99c39800000000001976a9141c4bc762dd5423e332166702cb75f40df79fea1288ac19430600')
